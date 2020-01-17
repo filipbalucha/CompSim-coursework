@@ -3,30 +3,44 @@ from itertools import zip_longest
 
 
 class Polynomial(object):
-    __coefficients = []  # coefficients are not accessible to the outside world
+    _coefficients = []  # coefficients are not accessible to the outside world
 
     def __init__(self, coefficients):
-        self.__coefficients = coefficients
+        self._coefficients = coefficients
 
-    def get_coefficients(self):
-        return self.__coefficients
+    def order(self):
+        """Calculates the order of the polynomial
 
-    def order(self):  # calculate and return the order of the polynomial
-        trimmed_list = trim_zeros(self.get_coefficients(), 'b')
+        Returns:
+            int -- the order of the polynomial
+        """
+        trimmed_list = trim_zeros(self._coefficients, 'b')
         # the n-th non-zero coefficient corresponds to (n-1)th power
         return len(trimmed_list) - 1
 
     def __add__(self, polynomial):
-        # Add another polynomial to this polynomial and return a new polynomial.
+        """Adds two polynomials together
+
+        Arguments:
+            polynomial {Polynomial} -- the polynomial to be added to the current instance
+
+        Returns:
+            Polynomial -- the sum of the two polynomials
+        """
         # Your code should include the case where the polynomials being added are of different order
-        c1 = self.get_coefficients()
-        c2 = polynomial.get_coefficients()
+        c1 = self._coefficients
+        c2 = polynomial._coefficients
         coefficients = list(map(sum, zip_longest(c1, c2, fillvalue=0)))
         return Polynomial(coefficients)
 
-    # calculate the derivative of the polynomial and return the result as a new polynomial
     def derivative(self):
-        coefficients = self.get_coefficients().copy()
+        """Calculates the derivative of the polynomial
+
+        Returns:
+            Polynomial -- the derivative of the polynomial
+        """
+        # make a copy of the values so as not to modify the actual values
+        coefficients = self._coefficients.copy()
         for (i, coefficient) in enumerate(coefficients):
             # the index corresponds to the power, e.g. on the 0th position is the constant, with x^0
             coefficients[i] *= i
@@ -35,8 +49,16 @@ class Polynomial(object):
         return Polynomial(coefficients)
 
     def antiderivative(self, constant):
-        # calculate the indefinite integral of the polynomial and return the result as a new polynomial
-        coefficients = self.get_coefficients().copy()
+        """Calculates the indefinite integral of the polynomial
+
+        Arguments:
+            constant {double} -- constant of integration
+
+        Returns:
+            Polynomial -- the indefinite integral of the polynomial
+        """
+        # make a copy of the values so as not to modify the actual values
+        coefficients = self._coefficients.copy()
         for (i, coefficient) in enumerate(coefficients):
             if i+1 != 0:
                 coefficients[i] *= 1/(i+1)
@@ -46,9 +68,10 @@ class Polynomial(object):
         return Polynomial(coefficients)
 
     def __str__(self):
-        # Print a sensible String representation of the polynomial
-        # e.g.: P(x) = a0 + a1x + a2x^2 + .... + anx^n
-
+        """
+        Returns:
+            String -- a sensible String representation of the polynomial
+        """
         def term(coefficient, power):
             if power == 0:  # a constant, so no x
                 return str(coefficient)
@@ -60,6 +83,6 @@ class Polynomial(object):
             if coefficient == -1:
                 return f" - x^{power}"
             return f" - {str(abs(coefficient))}*x^{power}"
-        return ''.join([term(coefficient, i) for (i, coefficient) in enumerate(self.get_coefficients())])
+        return f"P(x) = {''.join([term(coefficient, i) for (i, coefficient) in enumerate(self._coefficients)])}"
 
     # TODO: add term class - coefficient, power
