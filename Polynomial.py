@@ -73,9 +73,11 @@ class Polynomial(object):
             String -- a sensible String representation of the polynomial
         """
         def term(coefficient, power):
+            if coefficient == 0:
+                return ""
             if power == 0:  # a constant, so no x
                 return str(coefficient)
-            if coefficient >= 0:
+            if coefficient > 0:
                 if coefficient == 1:
                     return f" + x^{power}"
                 return f" + {str(coefficient)}*x^{power}"
