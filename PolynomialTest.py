@@ -3,8 +3,8 @@ from Polynomial import Polynomial
 
 class PolynomialTest(object):
     def run(self):
-        poly_a = Polynomial([2, 4, -1, 6])
-        poly_b = Polynomial([-1, -3, 4.5])
+        poly_a = Polynomial(coefficients=[2, 4, -1, 6])
+        poly_b = Polynomial(coefficients=[-1, -3, 4.5])
 
         print(f"The order of {poly_a} is: {poly_a.order()}")
         print(f"The sum of {poly_a} and {poly_b} is: {poly_a + poly_b}")
