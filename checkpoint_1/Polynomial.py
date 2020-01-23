@@ -97,6 +97,6 @@ class Polynomial(object):
         if not terms_str:
             return "P(x) = 0"
         # remove plus at the beginning
-        elif terms_str[:2] == " +":
-            return f"P(x) = {terms_str[3:]}"
+        elif terms_str[:1] == "+":
+            return f"P(x) = {terms_str[1:]}"
         return f"P(x) = {terms_str}"
