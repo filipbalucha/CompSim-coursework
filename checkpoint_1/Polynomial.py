@@ -93,10 +93,10 @@ class Polynomial(object):
         Returns:
             String -- a string representation of the polynomial
         """
-        terms_str = ''.join(str(term) for term in self._terms)
+        terms_str = ' '.join(str(term) for term in self._terms)
         if not terms_str:
             return "P(x) = 0"
         # remove plus at the beginning
-        elif terms_str[:1] == "+":
-            return f"P(x) = {terms_str[1:]}"
+        elif terms_str[:2] == " +":
+            return f"P(x) = {terms_str[2:]}"
         return f"P(x) = {terms_str}"
