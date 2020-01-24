@@ -24,4 +24,4 @@ class Nucleus(object):
     def __str__(self):
         """Returns a sensible representation of the nucleus based on its state
         """
-        return "0" if self._decayed else "1"
+        return " " if self._decayed else "+"
