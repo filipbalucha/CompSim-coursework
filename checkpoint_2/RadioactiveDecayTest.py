@@ -1,5 +1,4 @@
 from DecayArray import DecayArray
-from collections import OrderedDict
 
 
 class RadioactiveDecayTest(object):
