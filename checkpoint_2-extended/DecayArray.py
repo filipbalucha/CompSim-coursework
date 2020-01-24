@@ -30,6 +30,8 @@ class DecayArray(object):
         self._present_results()
 
     def _nucleus_dict(self):
+        """Returns a dictionary of each nucleus type and its concentration in the sample
+        """
         d = {}
         for line in self._array:
             for nucleus in line:
@@ -44,16 +46,16 @@ class DecayArray(object):
         """
         BORDER_LINE = "*" * (len(self._array)+4)
 
-        # output results
+        # output half-life
         print(f"\nMeasured half-life: {self._time_elapsed:.2f}min\n")
 
         # summarise concentration for each type of nucleus
+        print("Conc.  Element")
         for (nucleus_name, nucleus_count) in self._nucleus_dict().items():
             concentration = (nucleus_count/self._size)*100
             print(f"{concentration:5.2f}% {nucleus_name}")
-
-        # print grid of elements
         print()
+        # print grid of nuclei
         print(BORDER_LINE)
         for line in self._array:
             print(f"* {''.join(list(map(str, line)))} *")
