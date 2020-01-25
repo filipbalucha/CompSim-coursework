@@ -11,16 +11,12 @@ class DecayArray(object):
         prob_of_decay = timestep * decay_constant
         self._array = [[Nucleus(prob_of_decay)
                         for _ in range(length)] for _ in range(length)]
-
-    def _count_decayed(self):
-        """Calculates the number of nuclei that have decayed
-        """
-        return sum(sum(1 for nucleus in line if nucleus.decayed()) for line in self._array)
+        self._num_decayed = 0
 
     def _half_decayed(self):
         """Determines if half of the nuclei have already decayed
         """
-        return self._count_decayed()/self._size >= 0.5
+        return self._num_decayed >= 0.5 * self._size
 
     def simulate_decay(self):
         while(not self._half_decayed()):
@@ -29,6 +25,7 @@ class DecayArray(object):
                 for nucleus in line:
                     if not nucleus.decayed() and nucleus.should_decay():
                         nucleus.decay()
+                        self._num_decayed += 1
         self._present_results()
 
     def _present_results(self):
@@ -39,7 +36,7 @@ class DecayArray(object):
         # output results
         measured_decay_constant = ln(2)/self._time_elapsed
         print(f"Initial  N: {self._size}")
-        print(f"Final    N: {self._size - self._count_decayed()}")
+        print(f"Final    N: {self._size - self._num_decayed}")
         print(f"Measured λ: {measured_decay_constant:.5f}")
         print(f"Actual   λ: {self._decay_constant}")
         percentage_error = abs(measured_decay_constant -
