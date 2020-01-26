@@ -3,8 +3,8 @@ from Mandelbrot import Mandelbrot
 
 class MandelbrotTest(object):
     def run(self):
-        width, height = (300, 300)
-        x_min, x_max, y_min, y_max = (-2, 2, -2, 2)
+        width, height = (1000, 1000)
+        x_min, x_max, y_min, y_max = (-2.025, 0.6, -1.125, 1.125)
         max_iter = 255
         # x_min = -2
         # x_max = 2
