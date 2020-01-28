@@ -1,37 +1,43 @@
 from Nucleus import Nucleus
 from math import log as ln
 
+import numpy as np
+
 
 class DecayArray(object):
     def __init__(self, length, timestep, decay_constant):
         self._time_elapsed = 0
         self._size = length**2
+        self._num_decayed = 0
+
+        self._length = length
         self._timestep = timestep
         self._decay_constant = decay_constant
         prob_of_decay = timestep * decay_constant
-        self._array = [[Nucleus(prob_of_decay)
-                        for _ in range(length)] for _ in range(length)]
-        self._num_decayed = 0
+        self._array = np.array([Nucleus(prob_of_decay)
+                                for _ in range(self._size)])
+        self.function = np.vectorize(self.decay_nucleus)
 
     def _half_decayed(self):
         """Determines if half of the nuclei have already decayed
         """
         return self._num_decayed >= 0.5 * self._size
 
+    def decay_nucleus(self, nucleus):
+        if not nucleus.decayed() and nucleus.should_decay():
+            nucleus.decay()
+            self._num_decayed += 1
+
     def simulate_decay(self):
         while(not self._half_decayed()):
+            self.function(self._array)
             self._time_elapsed += self._timestep
-            for line in self._array:
-                for nucleus in line:
-                    if not nucleus.decayed() and nucleus.should_decay():
-                        nucleus.decay()
-                        self._num_decayed += 1
         self._present_results()
 
     def _present_results(self):
         """Prints out a readable summary of results
         """
-        BORDER_LINE = "*" * (len(self._array)+4)
+        BORDER_LINE = "*" * (self._length+4)
 
         # output results
         measured_decay_constant = ln(2)/self._time_elapsed
@@ -47,6 +53,6 @@ class DecayArray(object):
         # print grid of elements after one half-life
         print("o = undecayed")
         print(BORDER_LINE)
-        for line in self._array:
+        for line in self._array.reshape((self._length, self._length)):
             print(f"* {''.join(list(map(str, line)))} *")
         print(BORDER_LINE)
