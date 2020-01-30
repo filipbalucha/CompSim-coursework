@@ -29,6 +29,7 @@ class DecayArray(object):
             self._num_decayed += 1
 
     def simulate_decay(self):
+        print("Starting simulation...")
         while(not self._half_decayed()):
             self.function(self._array)
             self._time_elapsed += self._timestep

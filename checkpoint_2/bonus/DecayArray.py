@@ -21,6 +21,7 @@ class DecayArray(object):
         return self._count_decayed()/self._size >= 0.5
 
     def simulate_decay(self):
+        print("Starting simulation...")
         while(not self._half_decayed()):
             self._time_elapsed += self._timestep
             for line in self._array:
@@ -44,7 +45,7 @@ class DecayArray(object):
     def _present_results(self):
         """Prints out a readable summary of results
         """
-        BORDER_LINE = "*" * (len(self._array)+4)
+        BORDER_LINE = "+"+"-" * (len(self._array)+2)+"+"
 
         # output half-life
         print(f"\nMeasured half-life: {self._time_elapsed:.2f}min\n")
@@ -58,5 +59,5 @@ class DecayArray(object):
         # print grid of nuclei
         print(BORDER_LINE)
         for line in self._array:
-            print(f"* {''.join(list(map(str, line)))} *")
+            print(f"| {''.join(list(map(str, line)))} |")
         print(BORDER_LINE)

@@ -35,7 +35,6 @@ class RadioactiveDecayTest(object):
         (length, timestep, decay_constant) = (50, 0.01, 0.02775)
         # (length, timestep, decay_constant) = self._user_input()
         decay_array = DecayArray(length, timestep, decay_constant)
-        print("Starting simulation...")
         decay_array.simulate_decay()
 
 
