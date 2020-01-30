@@ -37,7 +37,7 @@ class DecayArray(object):
     def _present_results(self):
         """Prints out a readable summary of results
         """
-        BORDER_LINE = "*" * (self._length+4)
+        BORDER_LINE = "+" + "-" * (self._length+2) + "+"
 
         # output results
         measured_decay_constant = ln(2)/self._time_elapsed
@@ -51,8 +51,9 @@ class DecayArray(object):
             f"This is within: {percentage_error:.2f}% of the actual value.\n")
 
         # print grid of elements after one half-life
-        print("o = undecayed")
+        print("Legend:")
+        print("+ = undecayed")
         print(BORDER_LINE)
         for line in self._array.reshape((self._length, self._length)):
-            print(f"* {''.join(list(map(str, line)))} *")
+            print(f"| {''.join(list(map(str, line)))} |")
         print(BORDER_LINE)
