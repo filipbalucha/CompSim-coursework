@@ -10,16 +10,16 @@ class TrafficSimulation(object):
     def __init__(self, size):
         self.size = size
 
-    def plot(self, ρ_from, ρ_to, num_samples):
+    def plot(self, density_from, density_to, num_samples):
         """Plots steady state average speed against car density
 
         Arguments:
-            ρ_from {float} - minimum car density
-            ρ_to {float} - maximum car density
+            density_from {float} - minimum car density
+            density_to {float} - maximum car density
             num_samples {int} -- number of evenly-spaced density values to take from the density interval
         """
 
-        x_axis = np.linspace(ρ_from, ρ_to, num_samples)
+        x_axis = np.linspace(density_from, density_to, num_samples)
         y_axis = np.vectorize(self.ss_avg_speed)(x_axis)
 
         plt.scatter(x_axis, y_axis, marker='o', s=1)
@@ -31,21 +31,22 @@ class TrafficSimulation(object):
         # format x-axis ticks
         step = 0.1  # tick every 10%
         # display first multiple of 10 smaller than range start
-        ρ_from_rounded = floor(ρ_from*10)/10
+        density_from_rounded = floor(density_from*10)/10
         # display first multiple of 10 greater than range end
-        ρ_to_rounded = ceil(ρ_to*10)/10
-        x_ticks = np.arange(ρ_from_rounded, ρ_to_rounded+step, step)
+        density_to_rounded = ceil(density_to*10)/10
+        x_ticks = np.arange(density_from_rounded,
+                            density_to_rounded+step, step)
         x_labels = [f"{int(round(val*100))}%" for val in x_ticks]
         plt.xticks(x_ticks, x_labels)
 
         plt.show()
 
-    def ss_avg_speed(self, ρ):
+    def ss_avg_speed(self, density):
         """Calculates steady state average speed given car density
         """
-        # print(f"Calculating avg. speed for {int(ρ*100)}%")
-        print(f"Calculating avg. speed for {ρ*100:.2f}%")
-        num_cars = int(ρ * self.size)
+        # print(f"Calculating avg. speed for {int(density*100)}%")
+        print(f"Calculating avg. speed for {density*100:.2f}%")
+        num_cars = int(density * self.size)
         num_empty = self.size - num_cars
         # create an array of integers where one represents a segment which has a car
         arr = np.array([0] * num_empty + [1] * num_cars)
@@ -91,3 +92,28 @@ class TrafficSimulation(object):
                 else:
                     new_arr[i] = 0
         return new_arr, num_moved
+
+    def print_road(self, cars):
+        BAR = "---".join("|" * (len(cars)+1))
+        CONTENT = "| " + \
+            " | ".join(["C" if has_car else " " for has_car in cars]) + " |"
+        print(BAR)
+        print(CONTENT)
+        print(BAR)
+        print()
+
+    def animate(self, density, num_iterations):
+        """Prints a sensible representation of the road to the console for the given number of iterations
+
+        Arguments:
+            density {float} -- car density
+            num_iterations {int} -- number of iterations
+        """
+
+        num_cars = int(density * self.size)
+        num_empty = self.size - num_cars
+        arr = np.array([0] * num_empty + [1] * num_cars)
+
+        for _ in range(num_iterations):
+            self.print_road(arr)
+            arr, _ = self.traffic_step(arr)
