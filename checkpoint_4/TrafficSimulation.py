@@ -110,53 +110,68 @@ class TrafficSimulation(object):
         return arr
 
     def animate(self, density, num_iterations):
-        # TODO: finish
+        """Displays an animated visualization of a traffic jam
 
-        arr = self._road_array(density)
-
+        Arguments:
+            density {float} -- card density
+            num_iterations {int} -- the number of iterations before the animation stops
+        """
         def init():
+            """Sets up patches for display; this is the first frame
+
+            Returns:
+                [patch] -- an array of patches, which represent vehicles
+            """
             nonlocal patches
             for patch in patches:
                 ax.add_patch(patch)
             return patches
 
         def animate(i):
+            """Animation callback
+
+            Arguments:
+                i {int} -- iteration number (ignored)
+
+            Returns:
+                [patch] -- an updated array of patches, which represent vehicles
+            """
             nonlocal patches
-            ps_new = [None] * len(patches)
+            patches_new = [None] * len(patches)
 
             # traffic step
             for i, patch in enumerate(patches):
                 has_car = patch.get_visible()
-
-                next_idx = (i+1) % len(patches)
-                next_patch = patches[next_idx]
-                next_full = next_patch.get_visible()
-
-                prev_idx = (i-1) % len(patches)
-                prev_patch = patches[prev_idx]
-                prev_full = prev_patch.get_visible()
-
                 if has_car:
                     # move only if the next road segment is free
+                    next_idx = (i+1) % len(patches)
+                    next_patch = patches[next_idx]
+                    next_full = next_patch.get_visible()
                     if next_full:
-                        ps_new[i] = patch
+                        patches_new[i] = patch
                     else:
                         # swap positions with next element, which is invisible as it does not contain a car
                         patch.set_x((patch.get_x() + 1) % len(patches))
-                        ps_new[(i+1) % len(patches)] = patch
-                        ps_new[i] = next_patch
+                        patches_new[next_idx] = patch
+                        patches_new[i] = next_patch
                 else:
                     # a car can come only if the previous road segment is occupied
                     # we do not increment num_moved here as this would result in double-counting the cars that moved
+                    prev_idx = (i-1) % len(patches)
+                    prev_patch = patches[prev_idx]
+                    prev_full = prev_patch.get_visible()
                     if prev_full:
                         # swap positions with previous element, which is invisible as it does not contain a car
                         patch.set_x((patch.get_x() - 1) % len(patches))
-                        ps_new[(i-1) % len(patches)] = patch
-                        ps_new[i] = prev_patch
+                        patches_new[prev_idx] = patch
+                        patches_new[i] = prev_patch
                     else:
-                        ps_new[i] = patch
-            patches = ps_new
+                        patches_new[i] = patch
+            patches = patches_new
             return patches
+
+        # initial layout of cars
+        arr = self._road_array(density)
 
         # plotting
         fig = plt.figure(figsize=(15, 3))
