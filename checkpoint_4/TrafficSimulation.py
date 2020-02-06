@@ -1,7 +1,7 @@
 from matplotlib import animation
-import matplotlib.patches as patches
+from matplotlib.patches import Rectangle
 import numpy as np
-from random import random
+from random import random, randrange
 import matplotlib.pyplot as plt
 from math import ceil, floor
 
@@ -30,8 +30,10 @@ class TrafficSimulation(object):
 
         # format x-axis ticks
         step = 0.1  # tick every 10%
+
         # display first multiple of 10 smaller than range start
         density_from_rounded = floor(density_from*10)/10
+
         # display first multiple of 10 greater than range end
         density_to_rounded = ceil(density_to*10)/10
         x_ticks = np.arange(density_from_rounded,
@@ -44,12 +46,9 @@ class TrafficSimulation(object):
     def ss_avg_speed(self, density):
         """Calculates steady state average speed given car density
         """
-        # print(f"Calculating avg. speed for {int(density*100)}%")
         print(f"Calculating avg. speed for {density*100:.2f}%")
         arr = self._road_array(density)
         num_cars = int(density * self.size)
-        # shuffle the array in place to simulate random distribution of cars in traffic
-        np.random.shuffle(arr)
         avg_speed_last = -1
         avg_speed = 0
         # while average speed is changing
@@ -74,7 +73,7 @@ class TrafficSimulation(object):
         num_moved = 0
         for i, has_car in enumerate(arr):
             next_full = arr[(i+1) % arr.size]
-            previous_full = arr[(i-1) % arr.size]
+            prev_full = arr[(i-1) % arr.size]
             if has_car:
                 # move only if the next road segment is free
                 if next_full:
@@ -85,7 +84,7 @@ class TrafficSimulation(object):
             else:
                 # a car can come only if the previous road segment is occupied
                 # we do not increment num_moved here as this would result in double-counting the cars that moved
-                if previous_full:
+                if prev_full:
                     new_arr[i] = 1
                 else:
                     new_arr[i] = 0
@@ -108,25 +107,73 @@ class TrafficSimulation(object):
         np.random.shuffle(arr)
         return arr
 
-    def _print_road(self, cars):
-        BAR = "---".join("|" * (len(cars)+1))
-        CONTENT = "| " + \
-            " | ".join(["C" if has_car else " " for has_car in cars]) + " |"
-        print(BAR)
-        print(CONTENT)
-        print(BAR)
-        print()
-
     def animate(self, density, num_iterations):
-        """Prints a sensible representation of the road to the console for the given number of iterations
-
-        Arguments:
-            density {float} -- car density
-            num_iterations {int} -- number of iterations
-        """
+        # TODO: finish
 
         arr = self._road_array(density)
 
-        for _ in range(num_iterations):
-            self._print_road(arr)
-            arr, _ = self.traffic_step(arr)
+        def init():
+            for patch in patches:
+                ax.add_patch(patch)
+            return patches
+
+        def animate(i):
+            nonlocal patches
+            # print(" ".join(["1" if p.get_visible() else "0" for p in patches]))
+            ps_new = [None] * len(patches)
+            for i, patch in enumerate(patches):
+                has_car = patch.get_visible()
+
+                next_idx = (i+1) % len(patches)
+                next_patch = patches[next_idx]
+                next_full = next_patch.get_visible()
+
+                prev_idx = (i-1) % len(patches)
+                prev_patch = patches[prev_idx]
+                prev_full = prev_patch.get_visible()
+
+                if has_car:
+                    # move only if the next road segment is free
+                    if next_full:
+                        ps_new[i] = patch
+                    else:
+                        patch.set_x((patch.get_x() + 1) % len(patches))
+
+                        ps_new[(i+1) % len(patches)] = patch
+                        ps_new[i] = next_patch
+                else:
+                    if prev_full:
+                        patch.set_x((patch.get_x() - 1) % len(patches))
+                        ps_new[(i-1) % len(patches)] = patch
+                        ps_new[i] = prev_patch
+                    else:
+                        ps_new[i] = patch
+            patches = ps_new
+            return patches
+
+        # START PLOTS
+        fig = plt.figure()
+        ax = plt.axes()
+        ax.set_ylim(-1, 1)
+        ax.set_xlim(0, self.size+1)
+        ax.grid()
+        ax.get_yaxis().set_visible(False)
+        # ax.set_xticks(range(self.size))
+
+        arr = self._road_array(density)
+        print(arr)
+
+        # Initialise patches
+        y = -0.5
+        p_width = 0.4
+        p_height = 0.2
+        patches = [Rectangle((x+1-0.2, y), p_width, p_height, fc=f"#{randrange(0x1000000):06x}", animated=True, visible=has_car)
+                   for x, has_car in enumerate(arr)]
+
+        anim = animation.FuncAnimation(fig, animate,
+                                       init_func=init,
+                                       interval=200,
+                                       frames=1000,
+                                       blit=True,
+                                       repeat=True)
+        plt.show()
