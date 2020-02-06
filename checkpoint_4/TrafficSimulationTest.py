@@ -18,10 +18,9 @@ class TrafficSimulationTest(object):
             f"Steady state average speed for {density*100}% density is: {ts.ss_avg_speed(density)}")
 
     def animation(self):
-        road_length = 15
+        road_length = 100
         density = 0.6
         num_iterations = 200
-
         tsa = TrafficSimulation(road_length)
         tsa.animate(density, num_iterations)
 

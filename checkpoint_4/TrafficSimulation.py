@@ -22,6 +22,7 @@ class TrafficSimulation(object):
         x_axis = np.linspace(density_from, density_to, num_samples)
         y_axis = np.vectorize(self.ss_avg_speed)(x_axis)
 
+        # format plot
         plt.scatter(x_axis, y_axis, marker='o', s=1)
         plt.grid(True)
         plt.title("Steady state speed against car density")
@@ -51,12 +52,13 @@ class TrafficSimulation(object):
         num_cars = int(density * self.size)
         avg_speed_last = -1
         avg_speed = 0
+
         # while average speed is changing
         while(avg_speed != avg_speed_last):
             arr, num_moved = self.traffic_step(arr)
             avg_speed_last = avg_speed
             avg_speed = num_moved/num_cars
-        # reached steady state average speed
+
         return avg_speed
 
     def traffic_step(self, arr):
@@ -113,14 +115,16 @@ class TrafficSimulation(object):
         arr = self._road_array(density)
 
         def init():
+            nonlocal patches
             for patch in patches:
                 ax.add_patch(patch)
             return patches
 
         def animate(i):
             nonlocal patches
-            # print(" ".join(["1" if p.get_visible() else "0" for p in patches]))
             ps_new = [None] * len(patches)
+
+            # traffic step
             for i, patch in enumerate(patches):
                 has_car = patch.get_visible()
 
@@ -137,12 +141,15 @@ class TrafficSimulation(object):
                     if next_full:
                         ps_new[i] = patch
                     else:
+                        # swap positions with next element, which is invisible as it does not contain a car
                         patch.set_x((patch.get_x() + 1) % len(patches))
-
                         ps_new[(i+1) % len(patches)] = patch
                         ps_new[i] = next_patch
                 else:
+                    # a car can come only if the previous road segment is occupied
+                    # we do not increment num_moved here as this would result in double-counting the cars that moved
                     if prev_full:
+                        # swap positions with previous element, which is invisible as it does not contain a car
                         patch.set_x((patch.get_x() - 1) % len(patches))
                         ps_new[(i-1) % len(patches)] = patch
                         ps_new[i] = prev_patch
@@ -151,29 +158,35 @@ class TrafficSimulation(object):
             patches = ps_new
             return patches
 
-        # START PLOTS
-        fig = plt.figure()
+        # plotting
+        fig = plt.figure(figsize=(15, 3))
+
+        # configure axes
         ax = plt.axes()
         ax.set_ylim(-1, 1)
         ax.set_xlim(0, self.size+1)
         ax.grid()
+        ax.get_xaxis().set_visible(False)
         ax.get_yaxis().set_visible(False)
-        # ax.set_xticks(range(self.size))
 
         arr = self._road_array(density)
-        print(arr)
 
         # Initialise patches
-        y = -0.5
         p_width = 0.4
-        p_height = 0.2
-        patches = [Rectangle((x+1-0.2, y), p_width, p_height, fc=f"#{randrange(0x1000000):06x}", animated=True, visible=has_car)
+        p_height = 1
+        patches = [Rectangle((x+1-p_width/2, -p_height/2),
+                             p_width,
+                             p_height,
+                             fc=f"#{randrange(0x1000000):06x}",
+                             animated=True,
+                             visible=has_car)
                    for x, has_car in enumerate(arr)]
 
+        #
         anim = animation.FuncAnimation(fig, animate,
                                        init_func=init,
-                                       interval=200,
-                                       frames=1000,
+                                       interval=500,
+                                       frames=num_iterations,
                                        blit=True,
-                                       repeat=True)
+                                       repeat=False)
         plt.show()
