@@ -103,7 +103,10 @@ class TrafficSimulation(object):
         num_cars = int(density * self.size)
         num_empty = self.size - num_cars
         # create an array of integers where one represents a segment which has a car
-        return np.array([0] * num_empty + [1] * num_cars)
+        arr = np.array([0] * num_empty + [1] * num_cars)
+        # shuffle the array in place to simulate random distribution of cars in traffic
+        np.random.shuffle(arr)
+        return arr
 
     def _print_road(self, cars):
         BAR = "---".join("|" * (len(cars)+1))
