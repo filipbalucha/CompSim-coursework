@@ -1,9 +1,9 @@
+from math import ceil, floor
 from matplotlib import animation
 from matplotlib.patches import Rectangle
-import numpy as np
 from random import random, randrange
 import matplotlib.pyplot as plt
-from math import ceil, floor
+import numpy as np
 
 
 class TrafficSimulation(object):
@@ -109,7 +109,7 @@ class TrafficSimulation(object):
         np.random.shuffle(arr)
         return arr
 
-    def animate(self, density, num_iterations):
+    def animation(self, density, num_iterations):
         """Displays an animated visualization of a traffic jam
 
         Arguments:
@@ -197,10 +197,9 @@ class TrafficSimulation(object):
                              visible=has_car)
                    for x, has_car in enumerate(arr)]
 
-        #
         anim = animation.FuncAnimation(fig, animate,
                                        init_func=init,
-                                       interval=500,
+                                       interval=400,
                                        frames=num_iterations,
                                        blit=True,
                                        repeat=False)
