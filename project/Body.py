@@ -3,19 +3,37 @@ from math import sqrt as sqrt
 
 class Body(object):
     GRAV_CONST = 6.67408 * 10e-11
+    ZERO_ACC = (0, 0)
 
-    def __init__(self, name, mass, orbital_radius, velocity):
+    # TODO: is the simulation parameter necessary?
+    def __init__(self, name, mass, orbital_radius, velocity, simulation):
         self.name = name
         self.mass = mass
         self.velocity = velocity
+        self.simulation = simulation
         self.position = (orbital_radius, 0)
-        initial_acceleration = get_initial_acceleration(mass, orbital_radius)
-        self.current_acceleration = initial_acceleration
-        self.previous_acceleration = initial_acceleration
+        self.current_acceleration = ZERO_ACC
+        self.previous_acceleration = ZERO_ACC
         self.color = "red"  # TODO: introduce more colors
 
-    def get_initial_acceleration(self, mass, radius):
-        return (GRAV_CONST * mass / radius**2, 0)
+    def update_position(self, timestep):
+        self.position = self.position + self.velocity * timestep + 1/6 * \
+            (4 * self.current_acceleration -
+             self.previous_acceleration) * timestep ^ 2
 
-    def get_initial_velocity(self, mass, radius):
-        return (sqrt(GRAV_CONST * mass / radius), 0)
+    def update_velocity(self, timestep):
+        # update acceleration
+        next_acceleration = self.simulation.calc_acceleration(self)
+
+        self.velocity = self.velocity + 1/6 * \
+            (2 * next_acceleration + 5 * self.current_acceleration -
+             self.previous_acceleration) * timestep
+
+        self.previous_acceleration = self.current_acceleration
+        self.current_acceleration = next_acceleration
+
+    def calc_KE(self):
+        pass
+
+    def check_orbital_period(self):
+        pass
