@@ -1,9 +1,10 @@
 from math import sqrt as sqrt
 
+GRAV_CONST = 6.67408 * 10e-11
+ZERO_ACC = (0, 0)
 
-class Body(object):
-    GRAV_CONST = 6.67408 * 10e-11
-    ZERO_ACC = (0, 0)
+
+class Body:
 
     # TODO: is the simulation parameter necessary?
     def __init__(self, name, mass, orbital_radius, velocity, simulation):
