@@ -39,3 +39,6 @@ class Body:
 
     def check_orbital_period(self):
         pass
+
+    def __str__(self):
+        return f"Planet: {self.name} \n \tMass: {self.mass} \n \tVelocity: {self.velocity} \n \tCurrent acceleration: {self.current_acceleration}"
