@@ -1,5 +1,5 @@
-name,mass(kg),mean_orbital_velocity(km/s)
-Mercury,"0.33011e24",47.36
-Venus,4.8675e24,35.02
-Earth,5.9723e24,29.78
-Mars,0.64171e24,24.07
+name,mass(kg),mean_orbital_velocity(km/s),semimajor_axis(km)
+Mercury,"0.33011e24",47.36,57.91e6
+Venus,4.8675e24,35.02,108.21e6
+Earth,5.9723e24,29.78,149.60e6
+Mars,0.64171e24,24.07,227.92e6
