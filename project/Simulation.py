@@ -1,5 +1,6 @@
-import csv
 from Body import Body
+from pandas import read_csv
+import numpy as np
 
 
 class Simulation:
@@ -13,15 +14,13 @@ class Simulation:
 
     def read_input_data(self):
         with open(self.file_name) as csv_file:
-            csv_reader = csv.reader(csv_file, delimiter=',')
-            # skip header
-            next(csv_reader)
-            for row in csv_reader:
-                # name, mass, velocity, orbital_radius = row
-                self.body_list.append(Body(*row, self))
-                # Body(name, mass, orbital_radius, velocity, self)
+            df = read_csv(csv_file)
+            for row in df.itertuples():
+                print(*row[1:])
+                self.body_list.append(Body(*row[1:], self))
             for body in self.body_list:
-                print(body.calc_KE())
+                print(body)
+                body.update_velocity(self.timestep)
 
     def run_simulation(self):
         pass
