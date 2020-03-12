@@ -19,7 +19,7 @@ class Body(object):
     def update_position(self, timestep):
         self.position = self.position + self.velocity * timestep + 1/6 * \
             (4 * self.current_acceleration -
-             self.previous_acceleration) * timestep ^ 2
+             self.previous_acceleration) * timestep ** 2
 
     def update_velocity(self, timestep):
         # update acceleration
@@ -33,7 +33,7 @@ class Body(object):
         self.current_acceleration = next_acceleration
 
     def calc_KE(self):
-        pass
+        return 1/2 * self.mass * self.velocity ** 2
 
     def check_orbital_period(self):
         pass
