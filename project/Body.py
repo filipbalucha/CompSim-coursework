@@ -1,7 +1,8 @@
 from math import sqrt as sqrt
+import numpy as np
 
 GRAV_CONST = 6.67408 * 10e-11
-ZERO_ACC = (0, 0)
+ZERO_ACC = [0, 0]
 
 
 class Body:
@@ -10,11 +11,11 @@ class Body:
     def __init__(self, name, mass, orbital_radius, velocity, simulation):
         self.name = name
         self.mass = mass
-        self.velocity = velocity
+        self.velocity = np.array([0, velocity])
         self.simulation = simulation
-        self.position = (orbital_radius, 0)
-        self.current_acceleration = ZERO_ACC
-        self.previous_acceleration = ZERO_ACC
+        self.position = np.array((orbital_radius, 0))
+        self.current_acceleration = np.array(ZERO_ACC)
+        self.previous_acceleration = np.array(ZERO_ACC)
         self.color = "red"  # TODO: introduce more colors
 
     def update_position(self, timestep):
@@ -34,7 +35,7 @@ class Body:
         self.current_acceleration = next_acceleration
 
     def calc_KE(self):
-        return 1/2 * self.mass * self.velocity ** 2
+        return self.mass * np.linalg.norm(self.velocity) ** 2 / 2
 
     def check_orbital_period(self):
         pass
