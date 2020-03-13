@@ -1,8 +1,8 @@
 from Simulation import Simulation
 
-FILE_NAME = "body_data.csv"
-TIMESTEP = 0.01
-NUM_ITERATIONS = 500
+FILE_NAME = "body_data_backup.csv"
+TIMESTEP = 1000
+NUM_ITERATIONS = 5000
 
 
 class SimulationTest:
@@ -11,7 +11,7 @@ class SimulationTest:
         self.simulation = Simulation(file_name, timestep, num_iterations)
 
     def run(self):
-            # self.simulation().animate()
+        self.simulation.run_simulation()
         pass
 
 

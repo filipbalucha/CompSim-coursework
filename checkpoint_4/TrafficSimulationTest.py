@@ -32,4 +32,4 @@ if __name__ == "__main__":
     tst = TrafficSimulationTest()
     tst.calculate()
     tst.plot()
-    # tst.animation()
+    tst.animation()
